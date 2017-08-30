@@ -91,12 +91,11 @@ namespace NuGetGallery.Auditing
             {
                 Copyright = "a",
                 Created = DateTime.Now,
-                Deleted = true,
                 Description = "b",
                 DownloadCount = 1,
-#pragma warning disable 612
+#pragma warning disable CS0612 // Type or member is obsolete
                 ExternalPackageUrl = "c",
-#pragma warning restore 612
+#pragma warning restore CS0612 // Type or member is obsolete
                 FlattenedAuthors = "d",
                 FlattenedDependencies = "e",
                 Hash = "f",
@@ -119,6 +118,7 @@ namespace NuGetGallery.Auditing
                 PackageFileSize = 3,
                 PackageRegistration = new PackageRegistration() { Id = "o" },
                 PackageRegistrationKey = 4,
+                PackageStatusKey = PackageStatusKey.Deleted,
                 ProjectUrl = "p",
                 Published = DateTime.Now.AddMinutes(3),
                 ReleaseNotes = "q",

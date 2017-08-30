@@ -53,10 +53,10 @@ namespace NuGetGallery.Controllers
         {
             // Setup the search
             var packages = _packagesRepository.GetAll()
-                                .Where(p => !p.Deleted)
+                                .Where(PackageStatusKey.IsAvailable())
                                 .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel))
                                 .WithoutSortOnColumn(Version)
-                                .WithoutSortOnColumn(Id, ShouldIgnoreOrderById<V2FeedPackage>(options))
+                                .WithoutSortOnColumn(Id, ShouldIgnoreOrderById(options))
                                 .InterceptWith(new NormalizeVersionInterceptor());
 
             var semVerLevelKey = SemVerLevelKey.ForSemVerLevel(semVerLevel);
@@ -188,8 +188,8 @@ namespace NuGetGallery.Controllers
         {
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
-                .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase)
-                            && !p.Deleted)
+                .Where(PackageStatusKey.IsAvailable())
+                .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase))
                 .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel));
 
             if (!string.IsNullOrEmpty(version))
@@ -308,7 +308,8 @@ namespace NuGetGallery.Controllers
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.PackageRegistration.Owners)
-                .Where(p => p.Listed && !p.Deleted)
+                .Where(PackageStatusKey.IsAvailable())
+                .Where(p => p.Listed)
                 .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel))
                 .OrderBy(p => p.PackageRegistration.Id).ThenBy(p => p.Version)
                 .AsNoTracking();
@@ -458,8 +459,9 @@ namespace NuGetGallery.Controllers
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.SupportedFrameworks)
+                .Where(PackageStatusKey.IsAvailable())
                 .Where(p =>
-                    p.Listed && (includePrerelease || !p.IsPrerelease) && !p.Deleted &&
+                    p.Listed && (includePrerelease || !p.IsPrerelease) &&
                     idValues.Contains(p.PackageRegistration.Id.ToLower()))
                 .OrderBy(p => p.PackageRegistration.Id);
 

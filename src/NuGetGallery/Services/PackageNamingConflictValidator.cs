@@ -56,7 +56,8 @@ namespace NuGetGallery
             registrationId = registrationId.ToLowerInvariant();
 
             return _packageRepository.GetAll()
-                .Any(p => !p.Deleted && p.Title.ToLower() == registrationId);
+                .Where(PackageStatusKey.IsNotDeleted())
+                .Any(p => p.Title.ToLower() == registrationId);
         }
     }
 }

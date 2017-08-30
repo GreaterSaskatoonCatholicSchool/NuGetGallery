@@ -470,7 +470,7 @@ namespace NuGetGallery
                 return;
             }
 
-            if (package.Deleted)
+            if (package.IsDeleted())
             {
                 throw new InvalidOperationException("A deleted package should never be listed!");
             }
@@ -836,11 +836,11 @@ namespace NuGetGallery
             // If the last listed package was just unlisted, then we won't find another one
             var latestPackage = FindPackage(
                 packageRegistration.Packages,
-                p => !p.Deleted && p.Listed && p.SemVerLevelKey == SemVerLevelKey.Unknown);
+                p => p.PackageStatusKey == null && p.Listed && p.SemVerLevelKey == null);
 
             var latestSemVer2Package = FindPackage(
                 packageRegistration.Packages,
-                p => !p.Deleted && p.Listed && (p.SemVerLevelKey == SemVerLevelKey.SemVer2 || p.SemVerLevelKey == SemVerLevelKey.Unknown));
+                p => p.PackageStatusKey == null && p.Listed && (p.SemVerLevelKey == SemVerLevelKey.SemVer2 || p.SemVerLevelKey == null));
 
             if (latestPackage != null)
             {
@@ -852,7 +852,7 @@ namespace NuGetGallery
                     // If the newest uploaded package is a prerelease package, we need to find an older package that is
                     // a release version and set it to IsLatest.
                     var latestReleasePackage = FindPackage(
-                        packageRegistration.Packages.Where(p => !p.IsPrerelease && !p.Deleted && p.Listed && p.SemVerLevelKey == SemVerLevelKey.Unknown));
+                        packageRegistration.Packages.Where(p => !p.IsPrerelease && p.PackageStatusKey == null && p.Listed && p.SemVerLevelKey == null));
 
                     if (latestReleasePackage != null)
                     {
@@ -878,7 +878,7 @@ namespace NuGetGallery
                     // If the newest uploaded package is a prerelease package, we need to find an older package that is
                     // a release version and set it to IsLatest.
                     var latestSemVer2ReleasePackage = FindPackage(
-                        packageRegistration.Packages.Where(p => !p.IsPrerelease && !p.Deleted && p.Listed && (p.SemVerLevelKey == SemVerLevelKey.SemVer2 || p.SemVerLevelKey == SemVerLevelKey.Unknown)));
+                        packageRegistration.Packages.Where(p => !p.IsPrerelease && p.PackageStatusKey == null && p.Listed && (p.SemVerLevelKey == SemVerLevelKey.SemVer2 || p.SemVerLevelKey == null)));
 
                     if (latestSemVer2ReleasePackage != null)
                     {

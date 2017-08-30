@@ -49,9 +49,11 @@ namespace NuGetGallery.Controllers
                 return BadRequest(ODataQueryVerifier.GetValidationFailedMessage(options));
             } 
             var queryable = _packagesRepository.GetAll()
-                                .Where(p => !p.IsPrerelease && !p.Deleted && p.SemVerLevelKey == SemVerLevelKey.Unknown)
+                                .Where(PackageStatusKey.IsAvailable())
+                                .Where(p => !p.IsPrerelease)
+                                .Where(SemVerLevelKey.IsUnknown())
                                 .WithoutSortOnColumn(Version)
-                                .WithoutSortOnColumn(Id, ShouldIgnoreOrderById<V1FeedPackage>(options))
+                                .WithoutSortOnColumn(Id, ShouldIgnoreOrderById(options))
                                 .ToV1FeedPackageQuery(_configurationService.GetSiteRoot(UseHttps()));
 
             return QueryResult(options, queryable, MaxPageSize);
@@ -87,10 +89,10 @@ namespace NuGetGallery.Controllers
         {
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
+                .Where(PackageStatusKey.IsAvailable())
                 .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase) 
-                        && !p.IsPrerelease 
-                        && !p.Deleted 
-                        && p.SemVerLevelKey == SemVerLevelKey.Unknown);
+                        && !p.IsPrerelease)
+                .Where(SemVerLevelKey.IsUnknown());
 
             if (!string.IsNullOrEmpty(version))
             {
@@ -190,7 +192,9 @@ namespace NuGetGallery.Controllers
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.PackageRegistration.Owners)
-                .Where(p => p.Listed && !p.IsPrerelease && !p.Deleted && p.SemVerLevelKey == SemVerLevelKey.Unknown)
+                .Where(PackageStatusKey.IsAvailable())
+                .Where(p => p.Listed && !p.IsPrerelease)
+                .Where(SemVerLevelKey.IsUnknown())
                 .OrderBy(p => p.PackageRegistration.Id).ThenBy(p => p.Version)
                 .AsNoTracking();
 

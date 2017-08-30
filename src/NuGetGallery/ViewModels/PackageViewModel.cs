@@ -37,7 +37,7 @@ namespace NuGetGallery
             LatestStableVersionSemVer2 = package.IsLatestStableSemVer2;
             LastUpdated = package.Published;
             Listed = package.Listed;
-            Deleted = package.Deleted;
+            Deleted = package.IsDeleted();
             DownloadCount = package.DownloadCount;
             Prerelease = package.IsPrerelease;
             LicenseReportUrl = package.LicenseReportUrl;

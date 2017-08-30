@@ -207,10 +207,12 @@ namespace NuGetGallery
         /// </summary>
         public virtual ICollection<PackageHistory> PackageHistories { get; set; }
 
+        [Obsolete]
         public bool Deleted { get; set; }
 
         /// <summary>
-        /// The package status key, referring to the <see cref="NuGetGallery.PackageStatusKey"/> class.
+        /// The package status key, referring to the <see cref="NuGetGallery.PackageStatusKey"/> class. A null value corresponds to
+        /// <see cref="PackageStatusKey.Default"/>.
         /// </summary>
         public int? PackageStatusKey { get; set; }
 

@@ -108,7 +108,8 @@ namespace NuGetGallery
                 {
                     // Someone passed us in a version which was e.g. just unlisted? Or just not the latest version which is what we want to index. Doesn't really matter. We'll find one to index.
                     package = _packageRepository.GetAll()
-                        .Where(p => !p.Deleted && (p.IsLatest || p.IsLatestStable) && p.PackageRegistrationKey == packageRegistrationKey)
+                        .Where(PackageStatusKey.IsAvailable())
+                        .Where(p => (p.IsLatest || p.IsLatestStable) && p.PackageRegistrationKey == packageRegistrationKey)
                         .Include(p => p.PackageRegistration)
                         .Include(p => p.PackageRegistration.Owners)
                         .Include(p => p.SupportedFrameworks)
@@ -137,7 +138,9 @@ namespace NuGetGallery
 
         private List<PackageIndexEntity> GetPackages(DateTime? lastIndexTime)
         {
-            IQueryable<Package> set = _packageRepository.GetAll().Where(p => !p.Deleted);
+            IQueryable<Package> set = _packageRepository
+                .GetAll()
+                .Where(PackageStatusKey.IsAvailable());
 
             if (lastIndexTime.HasValue)
             {

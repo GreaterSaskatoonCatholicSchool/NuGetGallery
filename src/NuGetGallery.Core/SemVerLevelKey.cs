@@ -8,16 +8,48 @@ using NuGet.Versioning;
 
 namespace NuGetGallery
 {
-    // Hard-coded for now, but we can easily expand to use an additional Sql table to join with 
-    // when supporting additional semVerLevel's is needed.
-
     /// <summary>
-    /// Helper class to use to determine the SemVer level of a package version.
+    /// Helper class to use to determine the SemVer level of a package version. Hard-coded for now, but we can easily
+    /// expand to use an additional Sql table to join with when supporting additional semVerLevel's is needed.
     /// </summary>
     public static class SemVerLevelKey
     {
-        public static readonly string SemVerLevel2 = "2.0.0";
+        public const string SemVerLevel2 = "2.0.0";
         private static readonly NuGetVersion _semVer2Version = NuGetVersion.Parse(SemVerLevel2);
+
+        /// <summary>
+        /// Since <see cref="Unknown"/> is not a constant, we must explicitly construct the expression to force
+        /// that value to be considered a constant. If <see cref="Unknown"/> is not considered a constant, the
+        /// expression that is converted to SQL by Entity Framework is less efficient.
+        /// </summary>
+        private static readonly Lazy<Expression<Func<Package, bool>>> _isUnknown = new Lazy<Expression<Func<Package, bool>>>(() =>
+        {
+            var parameter = Expression.Parameter(typeof(Package), "p");
+            var property = Expression.Property(parameter, nameof(Package.SemVerLevelKey));
+            return Expression.Lambda<Func<Package, bool>>(
+                Expression.Equal(
+                    property,
+                    Expression.Constant(Unknown)),
+                parameter);
+        });
+
+        private static readonly Lazy<Expression<Func<Package, bool>>> _isSemVer2 = new Lazy<Expression<Func<Package, bool>>>(() =>
+        {
+            /// Since <see cref="Unknown"/> is not a constant, we must explicitly construct the expression to force
+            /// that value to be considered a constant. If <see cref="Unknown"/> is not considered a constant, the
+            /// expression that is converted to SQL by Entity Framework is less efficient.
+            var parameter = Expression.Parameter(typeof(Package), "p");
+            var property = Expression.Property(parameter, nameof(Package.SemVerLevelKey));
+            return Expression.Lambda<Func<Package, bool>>(
+                Expression.Or(
+                    Expression.Equal(
+                        property,
+                        Expression.Constant(Unknown)),
+                    Expression.Equal(
+                        property,
+                        Expression.Constant(SemVer2, typeof(int?)))),
+                parameter);
+        });
 
         /// <summary>
         /// This could either indicate being SemVer1-compliant, or non-SemVer-compliant at all (e.g. System.Versioning pattern).
@@ -28,7 +60,7 @@ namespace NuGetGallery
         /// Indicates being SemVer2-compliant, but not SemVer1-compliant.
         /// This key corresponds to semVerLevel=2.0.0
         /// </summary>
-        public static readonly int SemVer2 = 2;
+        public const int SemVer2 = 2;
 
         /// <summary>
         /// Identifies the SemVer-level of a package based on original version string and dependency versions.
@@ -113,10 +145,15 @@ namespace NuGetGallery
 
             if (parsedSemVerLevelKey == SemVer2)
             {
-                return p => p.SemVerLevelKey == Unknown || p.SemVerLevelKey == parsedSemVerLevelKey;
+                return _isSemVer2.Value;
             }
 
-            return p => p.SemVerLevelKey == Unknown;
+            return IsUnknown();
+        }
+
+        public static Expression<Func<Package, bool>> IsUnknown()
+        {
+            return _isUnknown.Value;
         }
     }
 }

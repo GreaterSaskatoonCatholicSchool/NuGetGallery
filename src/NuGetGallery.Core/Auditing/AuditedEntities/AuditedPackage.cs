@@ -82,7 +82,7 @@ namespace NuGetGallery.Auditing.AuditedEntities
                 Key = package.Key,
                 MinClientVersion = package.MinClientVersion,
                 UserKey = package.UserKey,
-                Deleted = package.Deleted
+                Deleted = package.IsDeleted(),
             };
         }
     }

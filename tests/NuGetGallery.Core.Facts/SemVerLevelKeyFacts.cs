@@ -217,5 +217,23 @@ namespace NuGetGallery
                 Assert.Equal(shouldBeCompliant, compiledFunction(package));
             }
         }
+
+        public class TheIsUnknownMethod
+        {
+            [Theory]
+            [InlineData(null, true)]
+            [InlineData(1, false)]
+            [InlineData(2, false)]
+            [InlineData(3, false)]
+            public void IsUnknown(int? semVerLevelKey, bool expected)
+            {
+                var package = new Package { SemVerLevelKey = semVerLevelKey };
+                var compiledFunction = SemVerLevelKey.IsUnknown().Compile();
+
+                var actual = compiledFunction(package);
+
+                Assert.Equal(expected, actual);
+            }
+        }
     }
 }
