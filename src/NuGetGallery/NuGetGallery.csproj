@@ -792,6 +792,7 @@
     <Compile Include="Migrations\201708302201411_AddPackageStatusKey.cs" />
     <Compile Include="Migrations\201708302201411_AddPackageStatusKey.Designer.cs">
       <DependentUpon>201708302201411_AddPackageStatusKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201709072246362_AddPackageLicenseReport2Sproc.cs" />
     <Compile Include="Migrations\201709072246362_AddPackageLicenseReport2Sproc.Designer.cs">
       <DependentUpon>201709072246362_AddPackageLicenseReport2Sproc.cs</DependentUpon>
@@ -1799,6 +1800,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201708302201411_AddPackageStatusKey.resx">
       <DependentUpon>201708302201411_AddPackageStatusKey.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201709072246362_AddPackageLicenseReport2Sproc.resx">
       <DependentUpon>201709072246362_AddPackageLicenseReport2Sproc.cs</DependentUpon>
     </EmbeddedResource>
