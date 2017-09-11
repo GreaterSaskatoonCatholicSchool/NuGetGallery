@@ -7,14 +7,24 @@ namespace NuGetGallery.Migrations
     {
         public override void Up()
         {
-            AddColumn("dbo.Packages", "PackageStatusKey", c => c.Int());
+            AddColumn("dbo.Packages", "PackageStatusKey", c => c.Int(
+                nullable: false,
+                defaultValue: 0));
 
             Sql(@"
-WHILE EXISTS (SELECT * FROM dbo.Packages WHERE Deleted = 1 AND PackageStatusKey IS NULL)
+DECLARE @PerIteration INT = 1000;
+DECLARE @Delay VARCHAR(8) = '00:00:01';
+
+DECLARE @UpdateCount INT = -1;
+WHILE @UpdateCount <> 0
 BEGIN
-UPDATE TOP (1000) dbo.Packages
-SET PackageStatusKey = 1
-WHERE Deleted = 1 AND PackageStatusKey IS NULL
+    UPDATE TOP (@PerIteration) dbo.Packages
+    SET PackageStatusKey = 1
+    WHERE Deleted = 1 AND PackageStatusKey = 0
+
+    SELECT @UpdateCount = @@ROWCOUNT
+
+    WAITFOR DELAY @Delay
 END
 ");
 

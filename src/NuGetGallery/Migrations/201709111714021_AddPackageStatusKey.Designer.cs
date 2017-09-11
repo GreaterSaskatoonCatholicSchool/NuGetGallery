@@ -13,7 +13,7 @@ namespace NuGetGallery.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201708302201411_AddPackageStatusKey"; }
+            get { return "201709111714021_AddPackageStatusKey"; }
         }
         
         string IMigrationMetadata.Source

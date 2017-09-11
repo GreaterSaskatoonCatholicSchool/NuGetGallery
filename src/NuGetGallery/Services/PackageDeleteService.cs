@@ -87,7 +87,7 @@ namespace NuGetGallery
 #pragma warning disable CS0612 // Type or member is obsolete
                     package.Deleted = true;
 #pragma warning restore CS0612 // Type or member is obsolete
-                    package.PackageStatusKey = PackageStatusKey.Deleted;
+                    package.PackageStatusKey = PackageStatus.Deleted;
                     packageDelete.Packages.Add(package);
 
                     await _auditingService.SaveAuditRecordAsync(CreateAuditRecord(package, package.PackageRegistration, AuditedPackageAction.SoftDelete, reason));

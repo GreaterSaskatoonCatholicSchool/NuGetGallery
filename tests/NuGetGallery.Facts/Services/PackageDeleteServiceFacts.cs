@@ -124,7 +124,7 @@ namespace NuGetGallery
 #pragma warning disable CS0612 // Type or member is obsolete
                 Assert.True(package.Deleted);
 #pragma warning restore CS0612 // Type or member is obsolete
-                Assert.Equal(PackageStatusKey.Deleted, package.PackageStatusKey);
+                Assert.Equal(PackageStatus.Deleted, package.PackageStatusKey);
             }
 
             [Fact]
@@ -161,7 +161,7 @@ namespace NuGetGallery
 #pragma warning disable CS0612 // Type or member is obsolete
                 Assert.True(package.Deleted);
 #pragma warning restore CS0612 // Type or member is obsolete
-                Assert.Equal(PackageStatusKey.Deleted, package.PackageStatusKey);
+                Assert.Equal(PackageStatus.Deleted, package.PackageStatusKey);
                 packageRepository.Verify(x => x.CommitChangesAsync());
                 packageDeleteRepository.Verify(x => x.InsertOnCommit(It.IsAny<PackageDelete>()));
                 packageDeleteRepository.Verify(x => x.CommitChangesAsync());
