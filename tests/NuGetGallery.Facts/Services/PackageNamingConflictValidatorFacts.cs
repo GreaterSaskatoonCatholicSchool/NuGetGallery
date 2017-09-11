@@ -80,7 +80,7 @@ namespace NuGetGallery
                 Version = "1.0.0",
                 Title = "B",
                 Listed = isExistingPackageListed,
-                PackageStatusKey = PackageStatusKey.Available,
+                PackageStatusKey = PackageStatus.Available,
             };
             var target = CreateValidator(packageRegistration, package);
 
@@ -106,7 +106,7 @@ namespace NuGetGallery
                 Version = "1.0.0",
                 Title = "B",
                 Listed = false,
-                PackageStatusKey = PackageStatusKey.Deleted,
+                PackageStatusKey = PackageStatus.Deleted,
             };
             var target = CreateValidator(packageRegistration, package);
 

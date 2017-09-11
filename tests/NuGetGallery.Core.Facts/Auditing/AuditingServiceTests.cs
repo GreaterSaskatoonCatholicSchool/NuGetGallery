@@ -118,7 +118,7 @@ namespace NuGetGallery.Auditing
                 PackageFileSize = 3,
                 PackageRegistration = new PackageRegistration() { Id = "o" },
                 PackageRegistrationKey = 4,
-                PackageStatusKey = PackageStatusKey.Deleted,
+                PackageStatusKey = PackageStatus.Deleted,
                 ProjectUrl = "p",
                 Published = DateTime.Now.AddMinutes(3),
                 ReleaseNotes = "q",

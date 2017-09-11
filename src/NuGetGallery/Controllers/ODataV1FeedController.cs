@@ -49,8 +49,7 @@ namespace NuGetGallery.Controllers
                 return BadRequest(ODataQueryVerifier.GetValidationFailedMessage(options));
             } 
             var queryable = _packagesRepository.GetAll()
-                                .Where(PackageStatusKey.IsAvailable())
-                                .Where(p => !p.IsPrerelease)
+                                .Where(p => !p.IsPrerelease && p.PackageStatusKey == PackageStatus.Available)
                                 .Where(SemVerLevelKey.IsUnknown())
                                 .WithoutSortOnColumn(Version)
                                 .WithoutSortOnColumn(Id, ShouldIgnoreOrderById(options))
@@ -89,9 +88,9 @@ namespace NuGetGallery.Controllers
         {
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
-                .Where(PackageStatusKey.IsAvailable())
-                .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase) 
-                        && !p.IsPrerelease)
+                .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase) &&
+                            !p.IsPrerelease &&
+                            p.PackageStatusKey == PackageStatus.Available)
                 .Where(SemVerLevelKey.IsUnknown());
 
             if (!string.IsNullOrEmpty(version))
@@ -192,8 +191,7 @@ namespace NuGetGallery.Controllers
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.PackageRegistration.Owners)
-                .Where(PackageStatusKey.IsAvailable())
-                .Where(p => p.Listed && !p.IsPrerelease)
+                .Where(p => p.Listed && !p.IsPrerelease && p.PackageStatusKey == PackageStatus.Available)
                 .Where(SemVerLevelKey.IsUnknown())
                 .OrderBy(p => p.PackageRegistration.Id).ThenBy(p => p.Version)
                 .AsNoTracking();

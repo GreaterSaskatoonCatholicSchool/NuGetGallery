@@ -1683,7 +1683,7 @@ namespace NuGetGallery
                     Version = "1.0",
                     PackageRegistration = packageRegistration,
                     Listed = false,
-                    PackageStatusKey = PackageStatusKey.Deleted,
+                    PackageStatusKey = PackageStatus.Deleted,
                 };
                 var packageRepository = new Mock<IEntityRepository<Package>>();
                 var service = CreateService(packageRepository: packageRepository);

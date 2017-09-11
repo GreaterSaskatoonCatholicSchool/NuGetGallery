@@ -53,7 +53,7 @@ namespace NuGetGallery.Controllers
         {
             // Setup the search
             var packages = _packagesRepository.GetAll()
-                                .Where(PackageStatusKey.IsAvailable())
+                                .Where(p => p.PackageStatusKey == PackageStatus.Available)
                                 .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel))
                                 .WithoutSortOnColumn(Version)
                                 .WithoutSortOnColumn(Id, ShouldIgnoreOrderById(options))
@@ -188,8 +188,8 @@ namespace NuGetGallery.Controllers
         {
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
-                .Where(PackageStatusKey.IsAvailable())
-                .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase))
+                .Where(p => p.PackageStatusKey == PackageStatus.Available &&
+                            p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase))
                 .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel));
 
             if (!string.IsNullOrEmpty(version))
@@ -308,8 +308,7 @@ namespace NuGetGallery.Controllers
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.PackageRegistration.Owners)
-                .Where(PackageStatusKey.IsAvailable())
-                .Where(p => p.Listed)
+                .Where(p => p.Listed && p.PackageStatusKey == PackageStatus.Available)
                 .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel))
                 .OrderBy(p => p.PackageRegistration.Id).ThenBy(p => p.Version)
                 .AsNoTracking();
@@ -459,10 +458,10 @@ namespace NuGetGallery.Controllers
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.SupportedFrameworks)
-                .Where(PackageStatusKey.IsAvailable())
                 .Where(p =>
                     p.Listed && (includePrerelease || !p.IsPrerelease) &&
-                    idValues.Contains(p.PackageRegistration.Id.ToLower()))
+                    idValues.Contains(p.PackageRegistration.Id.ToLower()) &&
+                    p.PackageStatusKey == PackageStatus.Available)
                 .OrderBy(p => p.PackageRegistration.Id);
 
             var semVerLevelKey = SemVerLevelKey.ForSemVerLevel(semVerLevel);
