@@ -210,9 +210,9 @@ namespace NuGetGallery
         public bool Deleted { get; set; }
 
         /// <summary>
-        /// The package status key, referring to the <see cref="NuGetGallery.PackageStatusKey"/> class.
+        /// The package status key, referring to the <see cref="PackageStatus"/> enum.
         /// </summary>
-        public int? PackageStatusKey { get; set; }
+        public PackageStatus PackageStatusKey { get; set; }
 
         public void ApplyEdit(PackageEdit edit, string hashAlgorithm, string hash, long packageFileSize)
         {
