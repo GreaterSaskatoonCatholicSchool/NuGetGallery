@@ -54,7 +54,7 @@ namespace NuGetGallery.Controllers
             // Setup the search
             var packages = _packagesRepository.GetAll()
                                 .Where(p => p.PackageStatusKey == PackageStatus.Available)
-                                .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel))
+                                .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevelPredicate(semVerLevel))
                                 .WithoutSortOnColumn(Version)
                                 .WithoutSortOnColumn(Id, ShouldIgnoreOrderById(options))
                                 .InterceptWith(new NormalizeVersionInterceptor());
@@ -190,7 +190,7 @@ namespace NuGetGallery.Controllers
                 .Include(p => p.PackageRegistration)
                 .Where(p => p.PackageStatusKey == PackageStatus.Available &&
                             p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase))
-                .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel));
+                .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevelPredicate(semVerLevel));
 
             if (!string.IsNullOrEmpty(version))
             {
@@ -309,7 +309,7 @@ namespace NuGetGallery.Controllers
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.PackageRegistration.Owners)
                 .Where(p => p.Listed && p.PackageStatusKey == PackageStatus.Available)
-                .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel))
+                .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevelPredicate(semVerLevel))
                 .OrderBy(p => p.PackageRegistration.Id).ThenBy(p => p.Version)
                 .AsNoTracking();
 
@@ -507,7 +507,7 @@ namespace NuGetGallery.Controllers
             bool includeAllVersions,
             string semVerLevel)
         {
-            var isSemVerLevelCompliant = SemVerLevelKey.IsPackageCompliantWithSemVerLevel(semVerLevel).Compile();
+            var isSemVerLevelCompliant = SemVerLevelKey.IsPackageCompliantWithSemVerLevelPredicate(semVerLevel).Compile();
 
             var updates = from p in packages.AsEnumerable()
                           let version = NuGetVersion.Parse(p.Version)

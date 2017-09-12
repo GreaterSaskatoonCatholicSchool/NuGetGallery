@@ -50,7 +50,7 @@ namespace NuGetGallery.Controllers
             } 
             var queryable = _packagesRepository.GetAll()
                                 .Where(p => !p.IsPrerelease && p.PackageStatusKey == PackageStatus.Available)
-                                .Where(SemVerLevelKey.IsUnknown())
+                                .Where(SemVerLevelKey.IsUnknownPredicate())
                                 .WithoutSortOnColumn(Version)
                                 .WithoutSortOnColumn(Id, ShouldIgnoreOrderById(options))
                                 .ToV1FeedPackageQuery(_configurationService.GetSiteRoot(UseHttps()));
@@ -91,7 +91,7 @@ namespace NuGetGallery.Controllers
                 .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase) &&
                             !p.IsPrerelease &&
                             p.PackageStatusKey == PackageStatus.Available)
-                .Where(SemVerLevelKey.IsUnknown());
+                .Where(SemVerLevelKey.IsUnknownPredicate());
 
             if (!string.IsNullOrEmpty(version))
             {
@@ -192,7 +192,7 @@ namespace NuGetGallery.Controllers
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.PackageRegistration.Owners)
                 .Where(p => p.Listed && !p.IsPrerelease && p.PackageStatusKey == PackageStatus.Available)
-                .Where(SemVerLevelKey.IsUnknown())
+                .Where(SemVerLevelKey.IsUnknownPredicate())
                 .OrderBy(p => p.PackageRegistration.Id).ThenBy(p => p.Version)
                 .AsNoTracking();
 

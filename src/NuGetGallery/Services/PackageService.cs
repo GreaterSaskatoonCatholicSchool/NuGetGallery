@@ -835,12 +835,16 @@ namespace NuGetGallery
 
             // If the last listed package was just unlisted, then we won't find another one
             var latestPackage = FindPackage(
-                packageRegistration.Packages,
-                p => p.PackageStatusKey == PackageStatus.Available && p.Listed && p.SemVerLevelKey == null);
+                packageRegistration.Packages.AsQueryable(),
+                ps => ps
+                    .Where(SemVerLevelKey.IsUnknownPredicate())
+                    .Where(p => p.PackageStatusKey == PackageStatus.Available && p.Listed));
 
             var latestSemVer2Package = FindPackage(
-                packageRegistration.Packages,
-                p => p.PackageStatusKey == PackageStatus.Available && p.Listed && (p.SemVerLevelKey == SemVerLevelKey.SemVer2 || p.SemVerLevelKey == null));
+                packageRegistration.Packages.AsQueryable(),
+                ps => ps
+                    .Where(SemVerLevelKey.IsSemVer2Predicate())
+                    .Where(p => p.PackageStatusKey == PackageStatus.Available && p.Listed));
 
             if (latestPackage != null)
             {
@@ -851,8 +855,11 @@ namespace NuGetGallery
                 {
                     // If the newest uploaded package is a prerelease package, we need to find an older package that is
                     // a release version and set it to IsLatest.
-                    var latestReleasePackage = FindPackage(
-                        packageRegistration.Packages.Where(p => !p.IsPrerelease && p.PackageStatusKey == PackageStatus.Available && p.Listed && p.SemVerLevelKey == null));
+                    var latestReleasePackage = FindPackage(packageRegistration
+                        .Packages
+                        .AsQueryable()
+                        .Where(SemVerLevelKey.IsUnknownPredicate())
+                        .Where(p => !p.IsPrerelease && p.PackageStatusKey == PackageStatus.Available && p.Listed));
 
                     if (latestReleasePackage != null)
                     {
@@ -877,8 +884,11 @@ namespace NuGetGallery
                 {
                     // If the newest uploaded package is a prerelease package, we need to find an older package that is
                     // a release version and set it to IsLatest.
-                    var latestSemVer2ReleasePackage = FindPackage(
-                        packageRegistration.Packages.Where(p => !p.IsPrerelease && p.PackageStatusKey == PackageStatus.Available && p.Listed && (p.SemVerLevelKey == SemVerLevelKey.SemVer2 || p.SemVerLevelKey == null)));
+                    var latestSemVer2ReleasePackage = FindPackage(packageRegistration
+                        .Packages
+                        .AsQueryable()
+                        .Where(SemVerLevelKey.IsSemVer2Predicate())
+                        .Where(p => !p.IsPrerelease && p.PackageStatusKey == PackageStatus.Available && p.Listed));
 
                     if (latestSemVer2ReleasePackage != null)
                     {
@@ -900,11 +910,11 @@ namespace NuGetGallery
             }
         }
 
-        private static Package FindPackage(IEnumerable<Package> packages, Func<Package, bool> predicate = null)
+        private static Package FindPackage(IQueryable<Package> packages, Func<IQueryable<Package>, IQueryable<Package>> predicate = null)
         {
             if (predicate != null)
             {
-                packages = packages.Where(predicate);
+                packages = predicate(packages);
             }
 
             NuGetVersion version = packages.Max(p => new NuGetVersion(p.Version));

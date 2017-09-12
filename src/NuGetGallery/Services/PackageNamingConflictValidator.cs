@@ -55,6 +55,7 @@ namespace NuGetGallery
 
             registrationId = registrationId.ToLowerInvariant();
 
+            // We allow any package status aside from soft-deleted to be considered for ID/title conflicts.
             return _packageRepository.GetAll()
                 .Any(p => p.PackageStatusKey != PackageStatus.Deleted && p.Title.ToLower() == registrationId);
         }

@@ -138,20 +138,25 @@ namespace NuGetGallery
         /// </summary>
         /// <param name="semVerLevel">The SemVer-level string indicating the SemVer-level to comply with.</param>
         /// <returns><c>True</c> if compliant; otherwise <c>false</c>.</returns>
-        public static Expression<Func<Package, bool>> IsPackageCompliantWithSemVerLevel(string semVerLevel)
+        public static Expression<Func<Package, bool>> IsPackageCompliantWithSemVerLevelPredicate(string semVerLevel)
         {
             // Note: we must return an expression that Linq to Entities is able to translate to SQL
             var parsedSemVerLevelKey = ForSemVerLevel(semVerLevel);
 
             if (parsedSemVerLevelKey == SemVer2)
             {
-                return _isSemVer2.Value;
+                return IsSemVer2Predicate();
             }
 
-            return IsUnknown();
+            return IsUnknownPredicate();
         }
 
-        public static Expression<Func<Package, bool>> IsUnknown()
+        public static Expression<Func<Package, bool>> IsSemVer2Predicate()
+        {
+            return _isSemVer2.Value;
+        }
+
+        public static Expression<Func<Package, bool>> IsUnknownPredicate()
         {
             return _isUnknown.Value;
         }
