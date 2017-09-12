@@ -91,6 +91,7 @@ namespace NuGetGallery.Auditing
             {
                 Copyright = "a",
                 Created = DateTime.Now,
+                Deleted = true,
                 Description = "b",
                 DownloadCount = 1,
 #pragma warning disable CS0612 // Type or member is obsolete
@@ -183,6 +184,7 @@ namespace NuGetGallery.Auditing
                 Assert.Equal("m", packageRecord["MinClientVersion"].Value<string>());
                 Assert.Equal(5, packageRecord["UserKey"].Value<int>());
                 Assert.True(packageRecord["Deleted"].Value<bool>());
+                Assert.Equal(1, packageRecord["PackageStatusKey"].Value<int>());
 
                 var registrationRecord = record["RegistrationRecord"];
 

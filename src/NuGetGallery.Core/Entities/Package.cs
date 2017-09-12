@@ -211,8 +211,7 @@ namespace NuGetGallery
         public bool Deleted { get; set; }
 
         /// <summary>
-        /// The package status key, referring to the <see cref="NuGetGallery.PackageStatusKey"/> class.
-        /// <see cref="PackageStatusKey.Default"/>.
+        /// The package status key, referring to the <see cref="PackageStatus"/> enum.
         /// </summary>
         public PackageStatus PackageStatusKey { get; set; }
 
