@@ -91,7 +91,9 @@ namespace NuGetGallery.Auditing
             {
                 Copyright = "a",
                 Created = DateTime.Now,
+#pragma warning disable CS0612 // Type or member is obsolete
                 Deleted = true,
+#pragma warning restore CS0612 // Type or member is obsolete
                 Description = "b",
                 DownloadCount = 1,
 #pragma warning disable CS0612 // Type or member is obsolete
