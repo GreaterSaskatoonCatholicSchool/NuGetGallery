@@ -88,9 +88,9 @@ namespace NuGetGallery.Controllers
         {
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
-                .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase) &&
-                            !p.IsPrerelease &&
-                            p.PackageStatusKey == PackageStatus.Available)
+                .Where(p => p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase)
+                            && !p.IsPrerelease
+                            && p.PackageStatusKey == PackageStatus.Available)
                 .Where(SemVerLevelKey.IsUnknownPredicate());
 
             if (!string.IsNullOrEmpty(version))

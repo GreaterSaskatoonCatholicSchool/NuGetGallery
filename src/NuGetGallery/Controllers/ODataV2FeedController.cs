@@ -188,8 +188,8 @@ namespace NuGetGallery.Controllers
         {
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
-                .Where(p => p.PackageStatusKey == PackageStatus.Available &&
-                            p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase))
+                .Where(p => p.PackageStatusKey == PackageStatus.Available
+                            && p.PackageRegistration.Id.Equals(id, StringComparison.OrdinalIgnoreCase))
                 .Where(SemVerLevelKey.IsPackageCompliantWithSemVerLevelPredicate(semVerLevel));
 
             if (!string.IsNullOrEmpty(version))
@@ -458,10 +458,9 @@ namespace NuGetGallery.Controllers
             var packages = _packagesRepository.GetAll()
                 .Include(p => p.PackageRegistration)
                 .Include(p => p.SupportedFrameworks)
-                .Where(p =>
-                    p.Listed && (includePrerelease || !p.IsPrerelease) &&
-                    idValues.Contains(p.PackageRegistration.Id.ToLower()) &&
-                    p.PackageStatusKey == PackageStatus.Available)
+                .Where(p => p.Listed && (includePrerelease || !p.IsPrerelease)
+                            && idValues.Contains(p.PackageRegistration.Id.ToLower())
+                            && p.PackageStatusKey == PackageStatus.Available)
                 .OrderBy(p => p.PackageRegistration.Id);
 
             var semVerLevelKey = SemVerLevelKey.ForSemVerLevel(semVerLevel);
