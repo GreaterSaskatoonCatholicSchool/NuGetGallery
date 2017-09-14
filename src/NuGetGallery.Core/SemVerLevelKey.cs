@@ -9,8 +9,7 @@ using NuGet.Versioning;
 namespace NuGetGallery
 {
     /// <summary>
-    /// Helper class to use to determine the SemVer level of a package version. Hard-coded for now, but we can easily
-    /// expand to use an additional Sql table to join with when supporting additional semVerLevel's is needed.
+    /// Helper class to use to determine the SemVer level of a package version.
     /// </summary>
     public static class SemVerLevelKey
     {
